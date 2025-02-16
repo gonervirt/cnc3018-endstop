@@ -1,6 +1,5 @@
 // Main dimensions
-plate_width = 110;
-plate_height = 85;
+margin = 5;  // margin around holes
 plate_thickness = 3;
 corner_radius = 5;
 
@@ -11,36 +10,36 @@ corner_holes_height = 71;
 
 // Center holes
 center_hole_diameter = 4;
-center_holes_width = 62;  // Changed from 82 to 62
-center_holes_height = 82; // Changed from 62 to 82
+center_holes_width = 62;
+center_holes_height = 82;
 
-module roundedRect(width, height, radius) {
-    hull() {
-        translate([radius, radius, 0])
-        circle(r=radius);
-        
-        translate([width-radius, radius, 0])
-        circle(r=radius);
-        
-        translate([radius, height-radius, 0])
-        circle(r=radius);
-        
-        translate([width-radius, height-radius, 0])
-        circle(r=radius);
+module complexBorder() {
+    minkowski() {
+        union() {
+            // Outer rectangle based on corner holes
+            translate([-(corner_holes_width/2 + margin), -(corner_holes_height/2 + margin)])
+            square([corner_holes_width + 2*margin, corner_holes_height + 2*margin]);
+            
+            // Inner rectangle based on center holes
+            translate([-(center_holes_width/2 + margin), -(center_holes_height/2 + margin)])
+            square([center_holes_width + 2*margin, center_holes_height + 2*margin]);
+        }
+        circle(r=corner_radius, $fn=32);
     }
 }
 
-// Create the base plate with rounded corners
+// Create the base plate with complex border
 difference() {
     // Main plate
+    translate([110/2, 85/2, 0])  // Center the shape
     linear_extrude(height=plate_thickness)
-    roundedRect(plate_width, plate_height, corner_radius);
+    complexBorder();
     
     // Corner holes
     for(x = [0,1], y = [0,1]) {
         translate([
-            (plate_width - corner_holes_width)/2 + x*corner_holes_width,
-            (plate_height - corner_holes_height)/2 + y*corner_holes_height,
+            (110 - corner_holes_width)/2 + x*corner_holes_width,
+            (85 - corner_holes_height)/2 + y*corner_holes_height,
             -1
         ])
         cylinder(d=corner_hole_diameter, h=plate_thickness+2, $fn=32);
@@ -49,8 +48,8 @@ difference() {
     // Center holes
     for(x = [0,1], y = [0,1]) {
         translate([
-            (plate_width - center_holes_width)/2 + x*center_holes_width,
-            (plate_height - center_holes_height)/2 + y*center_holes_height,
+            (110 - center_holes_width)/2 + x*center_holes_width,
+            (85 - center_holes_height)/2 + y*center_holes_height,
             -1
         ])
         cylinder(d=center_hole_diameter, h=plate_thickness+2, $fn=32);
