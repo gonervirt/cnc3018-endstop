@@ -1,0 +1,4 @@
+Could you write an openscad script to make an adapater plate. This is a round corner rectange, with size 110x85 mmm. on each corner, 4 holes 7mm diameter. Distance between hoes are 90mm, and 71mm.
+in the center of the rectangle, 4 more symetrique holes 4mm diameter, distance between holes are 82 mm and 62mm.
+
+could you make the certeern hole to have longest distance vertical
